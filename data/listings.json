@@ -1,0 +1,22 @@
+[
+  {
+    "id": "3-bedroom-house-for-sale-in-mandela-park",
+    "type": "sale",
+    "title": "3 Bedroom House For Sale in Mandela Park",
+    "suburb": "Khayelitsha",
+    "price": "R800 000",
+    "beds": 3,
+    "baths": 1,
+    "parking": 1,
+    "description": "Describe Property Here",
+    "images": [
+      "/properties/1785822994720-2d92d8b5.jpg",
+      "/properties/1785823032343-0a7d0ee7.jpg",
+      "/properties/1785823039079-4428cbef.jpg",
+      "/properties/1785823045800-3e998eec.jpg",
+      "/properties/1785823053413-ada88f4d.jpg"
+    ],
+    "status": "available",
+    "featured": true
+  }
+]
