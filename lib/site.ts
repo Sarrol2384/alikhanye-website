@@ -9,7 +9,7 @@ export const site = {
   email: "admin@alikhanye.com",
   address: "16 Lilly Kate Crescent, Blue Downs, 7100",
   registration: "2026/253356/07",
-  principal: "Wendy Landiswa Gqeya",
+  principal: "Wendy Landiswa Madikazi",
   ffc: "1233579",
   locale: "en_ZA",
   areaServed: [

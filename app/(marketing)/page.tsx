@@ -24,8 +24,8 @@ export default async function HomePage() {
     <>
       <section className="relative min-h-[88vh] overflow-hidden">
         <Image
-          src="/brand/banner.png"
-          alt=""
+          src="https://images.unsplash.com/photo-1757279119658-c91a18a73183?auto=format&fit=crop&w=2400&q=80"
+          alt="Homes beneath Table Mountain in Cape Town"
           fill
           priority
           className="object-cover object-center"
