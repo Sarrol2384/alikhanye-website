@@ -20,8 +20,20 @@ export async function GET() {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const listings = await readListings();
-  return NextResponse.json({ listings });
+
+  try {
+    const listings = await readListings();
+    return NextResponse.json({ listings });
+  } catch (error) {
+    console.error("Failed to load listings:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Could not load listings",
+      },
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -44,6 +56,17 @@ export async function POST(request: Request) {
     );
   }
 
-  const listing = await createListing(parsed.data);
-  return NextResponse.json({ listing }, { status: 201 });
+  try {
+    const listing = await createListing(parsed.data);
+    return NextResponse.json({ listing }, { status: 201 });
+  } catch (error) {
+    console.error("Failed to create listing:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Could not save listing",
+      },
+      { status: 500 },
+    );
+  }
 }

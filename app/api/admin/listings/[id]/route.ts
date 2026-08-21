@@ -30,11 +30,22 @@ export async function GET(_request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params;
-  const listing = await getListingById(id);
-  if (!listing) {
-    return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+  try {
+    const listing = await getListingById(id);
+    if (!listing) {
+      return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    }
+    return NextResponse.json({ listing });
+  } catch (error) {
+    console.error("Failed to load listing:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Could not load listing",
+      },
+      { status: 500 },
+    );
   }
-  return NextResponse.json({ listing });
 }
 
 export async function PUT(request: Request, context: RouteContext) {
@@ -58,11 +69,22 @@ export async function PUT(request: Request, context: RouteContext) {
     );
   }
 
-  const listing = await updateListing(id, parsed.data);
-  if (!listing) {
-    return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+  try {
+    const listing = await updateListing(id, parsed.data);
+    if (!listing) {
+      return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    }
+    return NextResponse.json({ listing });
+  } catch (error) {
+    console.error("Failed to update listing:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Could not save listing",
+      },
+      { status: 500 },
+    );
   }
-  return NextResponse.json({ listing });
 }
 
 export async function DELETE(_request: Request, context: RouteContext) {
@@ -71,9 +93,20 @@ export async function DELETE(_request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params;
-  const ok = await deleteListing(id);
-  if (!ok) {
-    return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+  try {
+    const ok = await deleteListing(id);
+    if (!ok) {
+      return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Failed to delete listing:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Could not delete listing",
+      },
+      { status: 500 },
+    );
   }
-  return NextResponse.json({ ok: true });
 }

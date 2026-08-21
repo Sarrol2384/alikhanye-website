@@ -1,6 +1,6 @@
 /**
  * Property listing types + helpers.
- * Listings are stored in `data/listings.json` and managed via `/admin`.
+ * Listings are stored in Supabase (production) or `data/listings.json` locally.
  */
 
 export type PropertyStatus = "available" | "sold" | "pending";

@@ -27,6 +27,27 @@ type FormState = {
   images: string[];
 };
 
+async function readJsonResponse(response: Response) {
+  const text = await response.text();
+  if (!text) {
+    throw new Error(
+      response.ok
+        ? "Empty response from server"
+        : `Request failed (${response.status})`,
+    );
+  }
+
+  try {
+    return JSON.parse(text) as Record<string, unknown>;
+  } catch {
+    throw new Error(
+      response.ok
+        ? "Invalid response from server"
+        : `Request failed (${response.status})`,
+    );
+  }
+}
+
 function toState(initial?: Property): FormState {
   return {
     title: initial?.title ?? "",
@@ -67,11 +88,13 @@ export function ListingForm({ mode, initial }: ListingFormProps) {
           method: "POST",
           body,
         });
-        const data = (await response.json()) as { url?: string; error?: string };
-        if (!response.ok || !data.url) {
-          throw new Error(data.error ?? `Upload failed for ${file.name}`);
+        const data = await readJsonResponse(response);
+        const url = typeof data.url === "string" ? data.url : undefined;
+        const error = typeof data.error === "string" ? data.error : undefined;
+        if (!response.ok || !url) {
+          throw new Error(error ?? `Upload failed for ${file.name}`);
         }
-        uploaded.push(data.url);
+        uploaded.push(url);
       }
       setForm((current) => ({
         ...current,
@@ -109,6 +132,11 @@ export function ListingForm({ mode, initial }: ListingFormProps) {
       return;
     }
 
+    if (form.description.trim().length < 10) {
+      toast.error("Description must be at least 10 characters");
+      return;
+    }
+
     setPending(true);
     try {
       const payload = {
@@ -134,12 +162,11 @@ export function ListingForm({ mode, initial }: ListingFormProps) {
           body: JSON.stringify(payload),
         },
       );
-      const data = (await response.json()) as {
-        listing?: Property;
-        error?: string;
-      };
-      if (!response.ok || !data.listing) {
-        throw new Error(data.error ?? "Could not save listing");
+      const data = await readJsonResponse(response);
+      const listing = data.listing as Property | undefined;
+      const error = typeof data.error === "string" ? data.error : undefined;
+      if (!response.ok || !listing) {
+        throw new Error(error ?? "Could not save listing");
       }
 
       toast.success(mode === "create" ? "Listing published" : "Listing updated");
@@ -248,6 +275,7 @@ export function ListingForm({ mode, initial }: ListingFormProps) {
           value={form.description}
           onChange={(e) => update("description", e.target.value)}
           required
+          minLength={10}
           rows={6}
           placeholder="Describe the property…"
         />
