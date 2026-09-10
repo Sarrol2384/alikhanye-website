@@ -200,14 +200,31 @@ async function writeListingsToFile(listings: Property[]): Promise<void> {
 
 export async function readListings(): Promise<Property[]> {
   if (isSupabaseConfigured()) {
-    return readListingsFromSupabase();
+    try {
+      return await readListingsFromSupabase();
+    } catch (error) {
+      console.error(
+        "Supabase listings read failed; falling back to data/listings.json:",
+        error instanceof Error ? error.message : error,
+      );
+      return readListingsFromFile();
+    }
   }
   return readListingsFromFile();
 }
 
 export async function getListingById(id: string): Promise<Property | null> {
   if (isSupabaseConfigured()) {
-    return getListingByIdFromSupabase(id);
+    try {
+      return await getListingByIdFromSupabase(id);
+    } catch (error) {
+      console.error(
+        "Supabase listing read failed; falling back to data/listings.json:",
+        error instanceof Error ? error.message : error,
+      );
+      const listings = await readListingsFromFile();
+      return listings.find((listing) => listing.id === id) ?? null;
+    }
   }
 
   const listings = await readListingsFromFile();
