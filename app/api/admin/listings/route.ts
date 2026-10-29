@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/admin-auth";
 import { createListing, readListings } from "@/lib/listings-store";
+import { revalidatePublicListings } from "@/lib/revalidate-listings";
 
 const listingSchema = z.object({
   title: z.string().trim().min(3).max(160),
@@ -58,6 +59,7 @@ export async function POST(request: Request) {
 
   try {
     const listing = await createListing(parsed.data);
+    revalidatePublicListings(listing.id);
     return NextResponse.json({ listing }, { status: 201 });
   } catch (error) {
     console.error("Failed to create listing:", error);

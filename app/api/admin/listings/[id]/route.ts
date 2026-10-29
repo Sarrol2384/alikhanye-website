@@ -6,6 +6,7 @@ import {
   getListingById,
   updateListing,
 } from "@/lib/listings-store";
+import { revalidatePublicListings } from "@/lib/revalidate-listings";
 
 const listingSchema = z.object({
   title: z.string().trim().min(3).max(160),
@@ -74,6 +75,7 @@ export async function PUT(request: Request, context: RouteContext) {
     if (!listing) {
       return NextResponse.json({ error: "Listing not found" }, { status: 404 });
     }
+    revalidatePublicListings(listing.id);
     return NextResponse.json({ listing });
   } catch (error) {
     console.error("Failed to update listing:", error);
@@ -98,6 +100,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     if (!ok) {
       return NextResponse.json({ error: "Listing not found" }, { status: 404 });
     }
+    revalidatePublicListings(id);
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Failed to delete listing:", error);

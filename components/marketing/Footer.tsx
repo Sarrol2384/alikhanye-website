@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { site } from "@/lib/site";
+import { complianceLines, site } from "@/lib/site";
 import { whatsappUrl } from "@/lib/format";
 
 export function Footer() {
@@ -29,7 +29,7 @@ export function Footer() {
         <div className="md:col-span-1">
           <span className="mb-4 inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-white p-1.5">
             <Image
-              src="/brand/logo.png"
+              src="/brand/logo.jpg"
               alt={site.name}
               width={56}
               height={56}
@@ -109,13 +109,17 @@ export function Footer() {
                 WhatsApp
               </a>
             </li>
-            <li>{site.address}</li>
-            <li>Reg. {site.registration}</li>
+            {complianceLines().map((fact) => (
+              <li key={fact.label}>
+                <span className="text-primary-foreground/55">{fact.label}: </span>
+                {fact.value}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
 
-      <div className="relative border-t border-primary-foreground/10 py-5 text-center text-xs text-primary-foreground/50">
+      <div className="relative border-t border-primary-foreground/10 px-6 py-5 pr-20 pb-20 text-center text-xs text-primary-foreground/50 sm:pr-6 sm:pb-5">
         © {year} {site.name}. All rights reserved. PPRE / PPRA registered.
       </div>
     </footer>

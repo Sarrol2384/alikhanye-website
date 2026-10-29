@@ -78,11 +78,15 @@ export function ContactForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as {
-          error?: string;
-        };
-        throw new Error(body.error ?? "Failed to send message");
+      const body = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
+      if (!res.ok || body.ok !== true) {
+        throw new Error(
+          body.error ??
+            "We couldn't send your message. Phone or WhatsApp us instead.",
+        );
       }
       toast.success("Message sent — we'll be in touch soon.");
       reset({
@@ -169,20 +173,31 @@ export function ContactForm({
         )}
       </div>
 
-      <div className="flex items-start gap-2">
-        <Checkbox
-          id="consent"
-          checked={consent === true}
-          onCheckedChange={(checked) =>
-            setValue("consent", checked === true ? true : (undefined as never), {
-              shouldValidate: true,
-            })
-          }
-        />
-        <Label htmlFor="consent" className="text-sm font-normal leading-snug">
-          I consent to {site.name} processing my personal information to respond
-          to this enquiry, in line with POPIA.
-        </Label>
+      <div className="space-y-3 rounded-lg border border-border bg-muted/40 px-3 py-3">
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          POPIA notice: {site.name} uses your name, phone number, email and
+          message only to reply to this enquiry. We don&apos;t sell your
+          details. Email {site.email} if you want them deleted.
+        </p>
+        <div className="flex items-start gap-2">
+          <Checkbox
+            id="consent"
+            checked={consent === true}
+            onCheckedChange={(checked) =>
+              setValue(
+                "consent",
+                checked === true ? true : (undefined as never),
+                {
+                  shouldValidate: true,
+                },
+              )
+            }
+          />
+          <Label htmlFor="consent" className="text-sm font-normal leading-snug">
+            I agree that {site.name} may use these details to respond to this
+            enquiry.
+          </Label>
+        </div>
       </div>
       {errors.consent && (
         <p className="text-xs text-destructive">{errors.consent.message}</p>

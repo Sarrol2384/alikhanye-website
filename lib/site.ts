@@ -1,8 +1,8 @@
 export const site = {
   name: "Alikhanye Properties",
-  slogan: "Lighting the way to your dream home",
+  slogan: "Homes in Blue Downs and nearby suburbs",
   description:
-    "Proudly South African real estate agency in Blue Downs, Cape Town — helping you buy, sell, and invest with integrity.",
+    "Estate agency in Blue Downs, Cape Town. We help people buy, sell and get a valuation in Blue Downs, Eerste River, Kuils River and the suburbs around them.",
   phoneDisplay: "073 752 9766",
   phoneTel: "+27737529766",
   whatsapp: "27737529766",
@@ -11,6 +11,13 @@ export const site = {
   registration: "2026/253356/07",
   principal: "Wendy Landiswa Madikazi",
   ffc: "1233579",
+  /**
+   * FFC expiry, once you have it (for example "31 March 2027").
+   * Leave this empty until it is confirmed. Empty values are not shown.
+   */
+  ffcExpiry: "" as string,
+  /** Stable sitemap date for pages that are not listings. Update when the copy changes. */
+  staticContentUpdated: "2026-10-29",
   locale: "en_ZA",
   areaServed: [
     "Blue Downs",
@@ -28,29 +35,41 @@ export const site = {
     {
       title: "Residential Property Sales",
       description:
-        "Guided buying and selling support for homes across Blue Downs and the greater Cape Town area.",
+        "Help with buying and selling houses in Blue Downs, Eerste River, Kuils River and nearby suburbs.",
     },
     {
       title: "Property Valuations",
       description:
-        "Clear, market-informed valuations so you know where you stand before you list or offer.",
+        "A straight valuation before you list a house or put in an offer.",
     },
     {
       title: "First-Time Home Buyer Assistance",
       description:
-        "Step-by-step help for first-time buyers — from affordability to offer and transfer.",
+        "Help from working out what you can afford, through to the offer and transfer.",
     },
     {
       title: "Property Marketing",
       description:
-        "Professional presentation and promotion that puts your property in front of serious buyers.",
+        "A clear listing and follow-up with people who enquire about your home.",
     },
     {
       title: "Investment Property Guidance",
       description:
-        "Practical advice for investors seeking opportunities with long-term growth potential.",
+        "Practical input if you are looking at a place to rent out or hold onto.",
     },
   ],
 } as const;
 
 export type SiteConfig = typeof site;
+
+export function complianceLines(): { label: string; value: string }[] {
+  const rows: { label: string; value: string }[] = [
+    { label: "Principal", value: site.principal },
+    { label: "Address", value: site.address },
+    { label: "Registration", value: site.registration },
+    { label: "FFC", value: site.ffc },
+    { label: "FFC expiry", value: site.ffcExpiry },
+  ];
+
+  return rows.filter((row) => row.value.trim().length > 0);
+}

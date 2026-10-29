@@ -2,6 +2,8 @@ import { Footer } from "@/components/marketing/Footer";
 import { Header } from "@/components/marketing/Header";
 import { WhatsAppFloat } from "@/components/marketing/WhatsAppFloat";
 
+export const revalidate = 300;
+
 export default function MarketingLayout({
   children,
 }: Readonly<{

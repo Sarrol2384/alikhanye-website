@@ -1,8 +1,9 @@
-import { site } from "@/lib/site";
+import { complianceLines, site } from "@/lib/site";
+import { absoluteUrl, getSiteUrl } from "@/lib/site-url";
 
 export function OrganizationJsonLd() {
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = getSiteUrl();
+  const ffc = complianceLines().find((line) => line.label === "FFC");
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -13,7 +14,7 @@ export function OrganizationJsonLd() {
     url: siteUrl,
     email: site.email,
     telephone: site.phoneTel,
-    image: `${siteUrl}/brand/logo.png`,
+    image: absoluteUrl("/brand/logo.jpg"),
     address: {
       "@type": "PostalAddress",
       streetAddress: "16 Lilly Kate Crescent",
@@ -33,14 +34,18 @@ export function OrganizationJsonLd() {
     identifier: [
       {
         "@type": "PropertyValue",
-        name: "Company Registration",
+        name: "Company registration",
         value: site.registration,
       },
-      {
-        "@type": "PropertyValue",
-        name: "FFC",
-        value: site.ffc,
-      },
+      ...(ffc
+        ? [
+            {
+              "@type": "PropertyValue",
+              name: "FFC",
+              value: ffc.value,
+            },
+          ]
+        : []),
     ],
   };
 

@@ -23,8 +23,8 @@ export function CalculatorResult({
       <p
         className={
           highlight
-            ? "mt-1 font-heading text-2xl text-primary"
-            : "mt-1 text-lg font-semibold text-primary"
+            ? "mt-1 font-heading text-xl break-words text-primary sm:text-2xl"
+            : "mt-1 text-lg font-semibold break-words text-primary"
         }
       >
         {value}

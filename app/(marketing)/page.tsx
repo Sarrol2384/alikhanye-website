@@ -1,21 +1,27 @@
 import Image from "next/image";
 import { Home, KeyRound, LineChart, Megaphone, Users } from "lucide-react";
 import { CTABand } from "@/components/marketing/CTABand";
+import { ListPropertyCta } from "@/components/marketing/ListPropertyCta";
 import { PropertyCard } from "@/components/marketing/PropertyCard";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
 import { buttonVariants } from "@/components/ui/button";
 import { LinkButton } from "@/components/ui/link-button";
 import { whatsappUrl } from "@/lib/format";
-import { readListings } from "@/lib/listings-store";
+import { hasFewListings } from "@/lib/listing-copy";
+import { readCachedListings } from "@/lib/listings-store";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export const metadata = pageMetadata({
+  description: site.description,
+  path: "/",
+});
 
 const serviceIcons = [Home, LineChart, Users, Megaphone, KeyRound] as const;
 
 export default async function HomePage() {
-  const listings = await readListings();
+  const listings = await readCachedListings();
   const featured = listings
     .filter((property) => property.featured)
     .slice(0, 3);
@@ -49,8 +55,8 @@ export default async function HomePage() {
               {site.slogan}
             </p>
             <p className="animate-hero-fade-up-delay-2 mt-5 max-w-lg text-base leading-relaxed text-primary-foreground/85 sm:text-lg">
-              Trusted real estate guidance in Blue Downs and greater Cape Town —
-              helping you buy, sell, and invest with confidence.
+              Based in Blue Downs. Buying, selling and valuations in Blue Downs,
+              Eerste River, Kuils River and nearby suburbs.
             </p>
             <div className="animate-hero-fade-up-delay-3 mt-8 flex w-full max-w-md flex-col gap-3 sm:flex-row">
               <LinkButton
@@ -83,9 +89,9 @@ export default async function HomePage() {
       <section className="bg-[linear-gradient(180deg,#fafbfc_0%,#eef2f7_100%)] px-6 py-20 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <SectionHeading
-            eyebrow="What we offer"
-            title="Real estate services that put people first"
-            description="From first-time buyers to seasoned investors, we provide professional, honest, and reliable support at every step."
+            eyebrow="What we do"
+            title="Sales, valuations and buyer help"
+            description="Straight help for people buying or selling in Blue Downs and the surrounding suburbs."
           />
 
           <ul className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
@@ -146,12 +152,20 @@ export default async function HomePage() {
         </section>
       ) : null}
 
+      {hasFewListings(listings.length) ? (
+        <section className="px-6 py-16 sm:px-8">
+          <div className="mx-auto max-w-6xl">
+            <ListPropertyCta count={listings.length} />
+          </div>
+        </section>
+      ) : null}
+
       <section className="bg-[linear-gradient(180deg,#fafbfc_0%,#eef2f7_100%)] px-6 py-20 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <SectionHeading
             eyebrow="Where we work"
             title="Serving Blue Downs and beyond"
-            description="Local knowledge across Cape Town&apos;s southern and eastern suburbs — with personal service you can trust."
+            description="Blue Downs, Eerste River, Kuils River and the suburbs around them."
           />
           <ul className="animate-section-reveal mt-12 flex flex-wrap justify-center gap-x-3 gap-y-3">
             {site.areaServed.map((area) => (

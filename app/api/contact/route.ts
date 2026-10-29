@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { sendContactNotification } from "@/lib/email";
+import { ContactDeliveryError, sendContactNotification } from "@/lib/email";
 
 const contactSchema = z.object({
   name: z.string().min(2),
@@ -38,10 +38,17 @@ export async function POST(request: Request) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
     }
-    console.error("Contact API error:", err);
+    if (err instanceof ContactDeliveryError) {
+      console.error("Contact API delivery error:", err.message);
+    } else {
+      console.error("Contact API error:", err);
+    }
     return NextResponse.json(
-      { error: "Failed to send message" },
-      { status: 500 },
+      {
+        error:
+          "We couldn't send your message just now. Phone or WhatsApp us and we'll pick it up.",
+      },
+      { status: 503 },
     );
   }
 }

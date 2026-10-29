@@ -18,6 +18,8 @@ export type Property = {
   images: string[];
   status: PropertyStatus;
   featured: boolean;
+  /** ISO timestamp from Supabase or the file store. Missing on older file listings. */
+  updatedAt?: string;
 };
 
 export function statusLabel(status: PropertyStatus): string {
