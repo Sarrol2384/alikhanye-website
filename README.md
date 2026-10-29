@@ -49,8 +49,10 @@ Without Supabase env vars, listings fall back to `data/listings.json` and `publi
 ## Agency admin (you — not the client)
 
 1. Open [http://localhost:3000/admin](http://localhost:3000/admin) (or `/admin/login`).
-2. Sign in with `ADMIN_PASSWORD` from `.env.local` (default demo password: `alikhanye2026`).
+2. Sign in with `ADMIN_PASSWORD` from `.env.local`. `ADMIN_SECRET` must be set as well. If either is missing, login is refused — there is no built-in password.
 3. Click **Add listing**, upload photos, fill details, publish.
+
+The old admin password was committed in this repository. Set a new password on Vercel and do not reuse the published one.
 
 Listings and uploads persist in Supabase when configured — works on Vercel serverless.
 
@@ -63,15 +65,15 @@ Client self-serve upload is intentionally not included — sell that as a paid C
 | `BREVO_API_KEY` | For live email | Brevo API key |
 | `BREVO_SENDER_EMAIL` | For live email | Verified Brevo sender |
 | `CONTACT_TO_EMAIL` | Recommended | Enquiry inbox (default: `admin@alikhanye.com`) |
-| `NEXT_PUBLIC_SITE_URL` | Recommended | Canonical site URL for metadata/sitemap |
-| `ADMIN_PASSWORD` | Recommended | Password for `/admin` |
-| `ADMIN_SECRET` | Optional | Cookie signing secret |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Public site URL for canonical links, sitemap and sharing. If unset, production uses `VERCEL_PROJECT_PRODUCTION_URL`, then `VERCEL_URL`, then `https://alikhanye-website.vercel.app`. Local dev still uses localhost. |
+| `ADMIN_PASSWORD` | Required for admin | Password for `/admin`. Do not reuse a password that was ever committed to the repo. |
+| `ADMIN_SECRET` | Required for admin | Cookie signing secret. Login is refused when this is missing. |
 | `NEXT_PUBLIC_SUPABASE_URL` | Production | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Production | Supabase anon key (public reads via RLS) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Production | Server-only key for admin CRUD + uploads |
 | `SUPABASE_DB_URL` | Optional | Postgres URI for `npm run db:setup` migrations |
 
-Without `BREVO_API_KEY`, the contact API still accepts submissions but skips sending email (logged as a warning).
+Without `BREVO_API_KEY`, the contact form returns an error and does not pretend the message was sent. No email is sent unless Brevo accepts it.
 
 ## Scripts
 
@@ -97,6 +99,6 @@ Admin **Publish listing** and photo uploads work in production once Supabase is 
 
 Place brand files in `public/brand/`:
 
-- `logo.png`
-- `founder.png`
+- `logo.jpg`
+- `founder.jpg`
 - `banner.png`

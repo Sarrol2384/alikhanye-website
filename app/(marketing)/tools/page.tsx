@@ -1,18 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Calculator } from "lucide-react";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Tools",
-  description: `Free property tools from ${site.name} — bond and affordability calculators for South African home buyers.`,
-  openGraph: {
-    title: `Tools | ${site.name}`,
-    description: "Bond repayment and affordability calculators for home buyers.",
-    locale: "en_ZA",
-  },
-};
+  description: `Bond and affordability calculators from ${site.name} for buyers in South Africa.`,
+  path: "/tools",
+});
 
 const tools = [
   {
@@ -31,7 +27,7 @@ export default function ToolsPage() {
         <SectionHeading
           eyebrow="Property tools"
           title="Helpful calculators"
-          description="Quick estimates to guide your home-buying journey. Results are indicative only — speak to us for personalised advice."
+          description="Work out a rough bond repayment, or what you might afford. These are estimates only — check with your bank before you offer."
         />
 
         <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:max-w-3xl">

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { AffordabilityCalculator } from "@/components/tools/AffordabilityCalculator";
@@ -7,19 +6,15 @@ import { SectionHeading } from "@/components/marketing/SectionHeading";
 import { buttonVariants } from "@/components/ui/button";
 import { LinkButton } from "@/components/ui/link-button";
 import { whatsappUrl } from "@/lib/format";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Bond calculator",
-  description: `Free bond repayment and affordability calculators from ${site.name} — estimate monthly repayments and what you may afford in South Africa.`,
-  openGraph: {
-    title: `Bond calculator | ${site.name}`,
-    description:
-      "Estimate bond repayments and affordability for South African home buyers.",
-    locale: "en_ZA",
-  },
-};
+  description: `Estimate a monthly bond repayment, or what you might afford, with ${site.name}. Figures are a guide only.`,
+  path: "/tools/bond-calculator",
+});
 
 export default function BondCalculatorPage() {
   const waHref = whatsappUrl(
@@ -53,10 +48,11 @@ export default function BondCalculatorPage() {
       <section className="border-t border-border bg-[linear-gradient(180deg,#fafbfc_0%,#eef2f7_100%)] px-6 py-16 sm:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-heading text-2xl text-primary sm:text-3xl">
-            Ready to take the next step?
+            Want to talk it through?
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {site.name} can guide you from affordability to offer and transfer.
+            Phone or WhatsApp Wendy if you want help with a bond or a valuation
+            in Blue Downs.
           </p>
           <div className="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
             <LinkButton href="/contact" size="lg" variant="accent" className="cta-lift">

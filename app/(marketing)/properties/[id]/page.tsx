@@ -3,60 +3,64 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Bath, BedDouble, Car, MapPin, MessageCircle } from "lucide-react";
+import { ListingJsonLd } from "@/components/marketing/ListingJsonLd";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
 import { buttonVariants } from "@/components/ui/button";
 import { LinkButton } from "@/components/ui/link-button";
-import { whatsappUrl } from "@/lib/format";
-import { getListingById } from "@/lib/listings-store";
+import { listingEnquiryMessage, whatsappUrl } from "@/lib/format";
+import { listingSummary, publicDescription } from "@/lib/listing-copy";
+import { readCachedListing, readCachedListings } from "@/lib/listings-store";
+import { pageMetadata } from "@/lib/metadata";
 import { statusLabel } from "@/lib/properties";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
-
-export const dynamic = "force-dynamic";
 
 type PropertyPageProps = {
   params: Promise<{ id: string }>;
 };
 
+export async function generateStaticParams() {
+  const listings = await readCachedListings();
+  return listings.map((listing) => ({ id: listing.id }));
+}
+
 export async function generateMetadata({
   params,
 }: PropertyPageProps): Promise<Metadata> {
   const { id } = await params;
-  const property = await getListingById(id);
+  const property = await readCachedListing(id);
   if (!property) {
     return { title: "Property not found" };
   }
 
-  return {
+  return pageMetadata({
     title: property.title,
-    description: property.description,
-    openGraph: {
-      title: `${property.title} | ${site.name}`,
-      description: property.description,
-      images: property.images[0] ? [{ url: property.images[0] }] : undefined,
-      locale: "en_ZA",
-    },
-  };
+    description: listingSummary(property),
+    path: `/properties/${property.id}`,
+    shareImage: "segment",
+  });
 }
 
 export default async function PropertyDetailPage({
   params,
 }: PropertyPageProps) {
   const { id } = await params;
-  const property = await getListingById(id);
+  const property = await readCachedListing(id);
   if (!property) notFound();
 
-  const enquireMessage = `Hi Alikhanye Properties, I'm interested in "${property.title}" (${property.suburb}). Please tell me more.`;
+  const description = publicDescription(property.description);
+  const enquireMessage = listingEnquiryMessage(property);
   const heroImage = property.images[0];
   const gallery = property.images.slice(1);
 
   return (
     <>
+      <ListingJsonLd property={property} />
       <section className="relative min-h-[42vh] overflow-hidden bg-navy sm:min-h-[50vh]">
         {heroImage ? (
           <Image
             src={heroImage}
-            alt={property.title}
+            alt={`${property.title} in ${property.suburb}`}
             fill
             priority
             className="object-cover"
@@ -71,7 +75,7 @@ export default async function PropertyDetailPage({
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">
             {property.suburb} · {statusLabel(property.status)}
           </p>
-          <h1 className="mt-3 max-w-3xl font-heading text-3xl leading-tight text-primary-foreground sm:text-5xl">
+          <h1 className="mt-3 max-w-3xl font-heading text-3xl leading-tight break-words text-primary-foreground sm:text-5xl">
             {property.title}
           </h1>
           <p className="mt-4 text-2xl font-semibold text-gold sm:text-3xl">
@@ -88,20 +92,27 @@ export default async function PropertyDetailPage({
               eyebrow="Overview"
               title="Property details"
             />
-            <p className="animate-section-reveal mt-8 text-base leading-relaxed text-muted-foreground whitespace-pre-line">
-              {property.description}
-            </p>
+            {description ? (
+              <p className="animate-section-reveal mt-8 text-base leading-relaxed whitespace-pre-line text-muted-foreground">
+                {description}
+              </p>
+            ) : (
+              <p className="animate-section-reveal mt-8 text-base leading-relaxed text-muted-foreground">
+                The write-up for this home isn&apos;t on the site yet. Phone or
+                WhatsApp us and we&apos;ll tell you more about it.
+              </p>
+            )}
 
             {gallery.length > 0 ? (
               <ul className="mt-10 grid gap-4 sm:grid-cols-2">
-                {gallery.map((src) => (
+                {gallery.map((src, index) => (
                   <li
                     key={src}
                     className="relative aspect-[4/3] overflow-hidden rounded-xl bg-muted"
                   >
                     <Image
                       src={src}
-                      alt=""
+                      alt={`${property.title} in ${property.suburb}, photo ${index + 2}`}
                       fill
                       className="object-cover"
                       sizes="(max-width: 640px) 100vw, 40vw"
@@ -138,10 +149,10 @@ export default async function PropertyDetailPage({
 
             <div className="mt-8 flex flex-col gap-3">
               <LinkButton
-                href={`/contact?property=${encodeURIComponent(property.title)}`}
+                href={`/contact?property=${encodeURIComponent(property.title)}&price=${encodeURIComponent(property.price)}`}
                 variant="accent"
                 size="lg"
-                className="cta-lift h-auto min-h-11 w-full justify-center px-4 py-3"
+                className="cta-lift h-auto min-h-11 w-full justify-center px-4 py-3 whitespace-normal"
               >
                 Enquire about this property
               </LinkButton>
@@ -151,11 +162,11 @@ export default async function PropertyDetailPage({
                 rel="noopener noreferrer"
                 className={cn(
                   buttonVariants({ size: "lg", variant: "outline" }),
-                  "cta-lift h-auto min-h-11 w-full justify-center px-4 py-3",
+                  "cta-lift h-auto min-h-11 w-full justify-center px-4 py-3 whitespace-normal",
                 )}
               >
                 <MessageCircle className="mr-2 size-4" />
-                WhatsApp
+                WhatsApp about this property
               </a>
               <Link
                 href="/properties"

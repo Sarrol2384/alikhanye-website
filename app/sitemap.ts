@@ -1,24 +1,42 @@
 import type { MetadataRoute } from "next";
-import { readListings } from "@/lib/listings-store";
+import { readCachedListings } from "@/lib/listings-store";
+import { site } from "@/lib/site";
+import { getSiteUrl } from "@/lib/site-url";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+export const revalidate = 300;
 
-export const dynamic = "force-dynamic";
+function staticLastModified(): Date {
+  return new Date(`${site.staticContentUpdated}T00:00:00.000Z`);
+}
+
+function listingLastModified(updatedAt?: string): Date {
+  if (updatedAt) {
+    const parsed = new Date(updatedAt);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  }
+  return staticLastModified();
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes = ["", "/about", "/properties", "/tools", "/tools/bond-calculator", "/contact"].map(
-    (path) => ({
-      url: `${siteUrl}${path}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: path === "" ? 1 : 0.8,
-    }),
-  );
+  const siteUrl = getSiteUrl();
+  const staticRoutes = [
+    "",
+    "/about",
+    "/properties",
+    "/tools",
+    "/tools/bond-calculator",
+    "/contact",
+  ].map((path) => ({
+    url: `${siteUrl}${path}`,
+    lastModified: staticLastModified(),
+    changeFrequency: "weekly" as const,
+    priority: path === "" ? 1 : 0.8,
+  }));
 
-  const listings = await readListings();
+  const listings = await readCachedListings();
   const propertyRoutes = listings.map((listing) => ({
     url: `${siteUrl}/properties/${listing.id}`,
-    lastModified: new Date(),
+    lastModified: listingLastModified(listing.updatedAt),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));

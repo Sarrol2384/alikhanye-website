@@ -10,6 +10,13 @@ type ContactEmailPayload = {
   message: string;
 };
 
+export class ContactDeliveryError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ContactDeliveryError";
+  }
+}
+
 let cachedClient: BrevoClient | null = null;
 
 function getBrevoClient(): BrevoClient | null {
@@ -49,8 +56,13 @@ export async function sendContactNotification(
   const senderEmail = getSenderEmail();
 
   if (!client) {
-    console.warn("BREVO_API_KEY not set — skipping contact email notification");
-    return;
+    console.error("BREVO_API_KEY is not set — contact enquiry was not emailed");
+    throw new ContactDeliveryError("Email is not configured");
+  }
+
+  if (toEmails.length === 0 || !senderEmail) {
+    console.error("Contact email recipient or sender is missing");
+    throw new ContactDeliveryError("Email is not configured");
   }
 
   const html = `
@@ -77,21 +89,26 @@ export async function sendContactNotification(
     .filter(Boolean)
     .join("\n");
 
-  const response = await client.transactionalEmails.sendTransacEmail({
-    sender: { name: site.name, email: senderEmail },
-    to: toEmails.map((email) => ({ email, name: site.name })),
-    replyTo: { email: payload.email, name: payload.name },
-    subject: `New enquiry from ${payload.name}`,
-    htmlContent: html,
-    textContent: text,
-  });
+  try {
+    const response = await client.transactionalEmails.sendTransacEmail({
+      sender: { name: site.name, email: senderEmail },
+      to: toEmails.map((email) => ({ email, name: site.name })),
+      replyTo: { email: payload.email, name: payload.name },
+      subject: `New enquiry from ${payload.name}`,
+      htmlContent: html,
+      textContent: text,
+    });
 
-  console.info(
-    "Contact notification sent via Brevo",
-    response.messageId ?? "ok",
-    "to:",
-    toEmails.join(", "),
-    "from:",
-    senderEmail,
-  );
+    console.info(
+      "Contact notification sent via Brevo",
+      response.messageId ?? "ok",
+      "to:",
+      toEmails.join(", "),
+      "from:",
+      senderEmail,
+    );
+  } catch (error) {
+    console.error("Brevo rejected the contact enquiry", error);
+    throw new ContactDeliveryError("Brevo did not accept the message");
+  }
 }
