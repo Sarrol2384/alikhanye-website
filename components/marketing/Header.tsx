@@ -41,17 +41,17 @@ export function Header() {
           href="/"
           className="flex min-w-0 max-w-[72%] shrink items-center gap-2.5 sm:max-w-none sm:gap-3.5"
         >
-          <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1.5 sm:h-20 sm:w-20 sm:p-2 lg:h-24 lg:w-24 lg:p-2.5">
+          <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 sm:h-16 sm:w-16 sm:p-1.5 lg:h-20 lg:w-20 lg:p-2">
             <Image
-              src="/brand/logo.png"
+              src="/brand/logo.jpg"
               alt=""
-              width={112}
-              height={112}
+              width={80}
+              height={80}
               priority
               className="h-full w-full object-contain"
             />
           </span>
-          <span className="font-heading text-base leading-tight text-primary-foreground break-words sm:text-xl lg:text-2xl">
+          <span className="min-w-0 font-heading text-sm leading-tight break-words text-primary-foreground sm:text-xl lg:text-2xl">
             {site.name}
           </span>
         </Link>
@@ -95,17 +95,17 @@ export function Header() {
           <SheetTrigger
             className={cn(
               buttonVariants({ variant: "ghost", size: "icon" }),
-              "text-primary-foreground hover:bg-white/10 hover:text-primary-foreground md:hidden",
+              "size-11 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground md:hidden",
             )}
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
           </SheetTrigger>
           <SheetContent side="right" className="w-[min(18rem,100vw)] max-w-full">
-            <SheetHeader>
+            <SheetHeader className="pr-12">
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
-            <nav className="mt-6 flex flex-col gap-1">
+            <nav className="mt-2 flex flex-col gap-1 px-4 pb-8">
               {navLinks.map((link) => {
                 const active = isActivePath(pathname, link.href);
                 return (

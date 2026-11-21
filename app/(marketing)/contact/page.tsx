@@ -1,30 +1,44 @@
-import type { Metadata } from "next";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { ContactForm } from "@/components/marketing/ContactForm";
 import { ContactMap } from "@/components/marketing/ContactMap";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
 import { whatsappUrl } from "@/lib/format";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Contact",
-  description: `Contact ${site.name} in Blue Downs — call, email, WhatsApp, or send an enquiry. Reg. ${site.registration}.`,
-  openGraph: {
-    title: `Contact | ${site.name}`,
-    description: `Reach ${site.name} at ${site.phoneDisplay} or ${site.email}.`,
-    locale: "en_ZA",
-  },
-};
+  description: `Contact ${site.name} in Blue Downs — call ${site.phoneDisplay}, email ${site.email}, or send a message. Reg. ${site.registration}.`,
+  path: "/contact",
+});
+
+const interestValues = new Set([
+  "buy",
+  "sell",
+  "valuation",
+  "first-time-buyer",
+  "investment",
+  "other",
+]);
 
 type ContactPageProps = {
-  searchParams: Promise<{ property?: string }>;
+  searchParams: Promise<{ property?: string; price?: string; interest?: string }>;
 };
 
 export default async function ContactPage({ searchParams }: ContactPageProps) {
-  const { property } = await searchParams;
+  const { property, price, interest } = await searchParams;
   const propertyTitle = property?.trim();
+  const propertyPrice = price?.trim();
+  const requestedInterest = interest?.trim() ?? "";
+  const defaultInterest = interestValues.has(requestedInterest)
+    ? requestedInterest
+    : propertyTitle
+      ? "buy"
+      : "";
   const defaultMessage = propertyTitle
-    ? `Hi Alikhanye Properties, I'm interested in "${propertyTitle}". Please tell me more.`
+    ? `Hi Alikhanye Properties, I'm interested in "${propertyTitle}"${
+        propertyPrice ? `, listed at ${propertyPrice}` : ""
+      }. Please tell me more.`
     : "";
 
   const waHref = whatsappUrl(
@@ -68,8 +82,8 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           <SectionHeading
             align="left"
             eyebrow="Contact"
-            title="Let's start the conversation"
-            description="Tell us what you need — buying, selling, valuations, or investment guidance. We'll respond promptly."
+            title="Get in touch"
+            description="Phone, WhatsApp or send a message. Wendy works from Blue Downs."
           />
 
           <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
@@ -132,7 +146,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               <div className="mt-6">
                 <ContactForm
                   defaultMessage={defaultMessage}
-                  defaultInterest={propertyTitle ? "buy" : ""}
+                  defaultInterest={defaultInterest}
                 />
               </div>
             </div>

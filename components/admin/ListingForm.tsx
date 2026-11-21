@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { isPlaceholderDescription } from "@/lib/listing-copy";
 import type { Property, PropertyStatus } from "@/lib/properties";
 
 type ListingFormProps = {
@@ -279,6 +280,13 @@ export function ListingForm({ mode, initial }: ListingFormProps) {
           rows={6}
           placeholder="Describe the property…"
         />
+        {form.description.trim() &&
+        isPlaceholderDescription(form.description) ? (
+          <p className="text-xs text-destructive">
+            This still looks like a placeholder. The public site hides it until
+            you write a real description.
+          </p>
+        ) : null}
       </div>
 
       <label className="flex items-center gap-2 text-sm">

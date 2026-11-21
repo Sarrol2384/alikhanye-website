@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Bath, BedDouble, Car } from "lucide-react";
+import { publicDescription } from "@/lib/listing-copy";
 import type { Property } from "@/lib/properties";
 import { statusLabel } from "@/lib/properties";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,7 @@ type PropertyCardProps = {
 
 export function PropertyCard({ property, className }: PropertyCardProps) {
   const image = property.images[0];
+  const description = publicDescription(property.description);
 
   return (
     <Link
@@ -40,15 +42,17 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
           {property.suburb}
         </p>
-        <h3 className="mt-2 font-heading text-xl leading-snug text-primary group-hover:text-navy">
+        <h3 className="mt-2 font-heading text-xl leading-snug break-words text-primary group-hover:text-navy">
           {property.title}
         </h3>
-        <p className="mt-2 text-lg font-semibold text-primary">
+        <p className="mt-2 text-lg font-semibold break-words text-primary">
           {property.price}
         </p>
-        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-          {property.description}
-        </p>
+        {description ? (
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+            {description}
+          </p>
+        ) : null}
 
         <ul className="mt-auto flex flex-wrap gap-4 border-t border-border pt-4 text-sm text-muted-foreground">
           <li className="inline-flex items-center gap-1.5">

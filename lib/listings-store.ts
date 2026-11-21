@@ -1,7 +1,12 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { promises as fs } from "fs";
 import path from "path";
+import {
+  LISTINGS_CACHE_TAG,
+  LISTINGS_REVALIDATE_SECONDS,
+} from "@/lib/listings-cache";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import type { Database } from "@/lib/supabase/types";
@@ -48,6 +53,7 @@ function rowToProperty(row: ListingRow): Property {
     images: Array.isArray(row.images) ? row.images : [],
     status: row.status,
     featured: row.featured,
+    updatedAt: row.updated_at,
   };
 }
 
@@ -186,9 +192,14 @@ async function readListingsFromFile(): Promise<Property[]> {
 
   return parsed.map((listing) => {
     const { shortDescription: _short, ...rest } = listing;
+    const updatedAt =
+      typeof rest.updatedAt === "string" && rest.updatedAt.trim()
+        ? rest.updatedAt
+        : undefined;
     return {
       ...rest,
       description: rest.description || _short || "",
+      updatedAt,
     };
   });
 }
@@ -246,6 +257,7 @@ export async function createListing(input: ListingInput): Promise<Property> {
     id,
     type: "sale",
     ...input,
+    updatedAt: new Date().toISOString(),
   };
 
   listings.unshift(listing);
@@ -269,6 +281,7 @@ export async function updateListing(
     id,
     type: "sale",
     ...input,
+    updatedAt: new Date().toISOString(),
   };
   listings[index] = updated;
   await writeListingsToFile(listings);
@@ -285,4 +298,26 @@ export async function deleteListing(id: string): Promise<boolean> {
   if (next.length === listings.length) return false;
   await writeListingsToFile(next);
   return true;
+}
+
+export const readCachedListings = unstable_cache(
+  async () => readListings(),
+  ["public-listings"],
+  {
+    revalidate: LISTINGS_REVALIDATE_SECONDS,
+    tags: [LISTINGS_CACHE_TAG],
+  },
+);
+
+const readCachedListingById = unstable_cache(
+  async (id: string) => getListingById(id),
+  ["public-listing"],
+  {
+    revalidate: LISTINGS_REVALIDATE_SECONDS,
+    tags: [LISTINGS_CACHE_TAG],
+  },
+);
+
+export function readCachedListing(id: string): Promise<Property | null> {
+  return readCachedListingById(id);
 }
