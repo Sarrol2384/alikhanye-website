@@ -38,9 +38,9 @@ export default function BondCalculatorPage() {
           </div>
 
           <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
-            These calculators provide estimates only and do not constitute
-            financial advice. Actual bond approval, rates, and instalments
-            depend on your bank, credit profile, and property details.
+            Both calculators are estimates only. They are not a bank quotation
+            and they are not financial advice. What you are offered depends on
+            the bank, your credit record and the property.
           </p>
         </div>
       </section>

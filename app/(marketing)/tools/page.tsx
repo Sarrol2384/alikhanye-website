@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calculator } from "lucide-react";
+import { Calculator, Wallet } from "lucide-react";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
 import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
@@ -12,11 +12,18 @@ export const metadata = pageMetadata({
 
 const tools = [
   {
-    href: "/tools/bond-calculator",
-    title: "Bond calculator",
+    href: "/tools/bond-calculator#repayment",
+    title: "Bond repayment",
     description:
-      "Estimate monthly bond repayments and what you may afford based on your income.",
+      "Work out a monthly repayment from the price, your deposit, the interest rate and the term.",
     icon: Calculator,
+  },
+  {
+    href: "/tools/bond-calculator#affordability",
+    title: "Bond affordability",
+    description:
+      "See what bond the 30% of gross income rule suggests, for one income or two incomes together.",
+    icon: Wallet,
   },
 ] as const;
 

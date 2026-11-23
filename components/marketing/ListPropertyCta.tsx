@@ -26,14 +26,14 @@ export function ListPropertyCta({ count }: ListPropertyCtaProps) {
       </p>
       <div className="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
         <LinkButton
-          href="/contact?interest=sell"
+          href="/list-your-property"
           variant="accent"
           className="cta-lift h-auto min-h-11 justify-center px-4 py-3"
         >
           List your property
         </LinkButton>
         <LinkButton
-          href="/contact?interest=valuation"
+          href="/list-your-property"
           variant="outline"
           className="cta-lift h-auto min-h-11 justify-center px-4 py-3"
         >

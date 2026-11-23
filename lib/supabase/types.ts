@@ -60,6 +60,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      reviews: {
+        Row: {
+          id: string;
+          client_name: string;
+          suburb: string | null;
+          rating: number;
+          comment: string;
+          published: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          client_name: string;
+          suburb?: string | null;
+          rating: number;
+          comment: string;
+          published?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          client_name?: string;
+          suburb?: string | null;
+          rating?: number;
+          comment?: string;
+          published?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

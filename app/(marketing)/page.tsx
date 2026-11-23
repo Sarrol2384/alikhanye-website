@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Home, KeyRound, LineChart, Megaphone, Users } from "lucide-react";
 import { CTABand } from "@/components/marketing/CTABand";
 import { ListPropertyCta } from "@/components/marketing/ListPropertyCta";
+import { ReviewsSection } from "@/components/marketing/ReviewsSection";
 import { PropertyCard } from "@/components/marketing/PropertyCard";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
 import { buttonVariants } from "@/components/ui/button";
@@ -179,6 +180,8 @@ export default async function HomePage() {
           </ul>
         </div>
       </section>
+
+      <ReviewsSection />
 
       <CTABand />
     </>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { AdminNav } from "@/components/admin/AdminNav";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -22,12 +22,7 @@ export default function AdminLayout({
             </p>
             <p className="font-heading text-xl">{site.name}</p>
           </div>
-          <Link
-            href="/"
-            className="text-sm text-primary-foreground/80 underline-offset-4 hover:text-gold hover:underline"
-          >
-            View website
-          </Link>
+          <AdminNav />
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>

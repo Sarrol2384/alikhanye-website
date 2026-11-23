@@ -18,7 +18,6 @@ function parseAmount(value: string): number {
 export function AffordabilityCalculator() {
   const [grossIncome, setGrossIncome] = useState("35000");
   const [existingDebt, setExistingDebt] = useState("0");
-  const [deposit, setDeposit] = useState("150000");
   const [annualRate, setAnnualRate] = useState(String(BOND_DEFAULTS.annualRate));
   const [termYears, setTermYears] = useState(String(BOND_DEFAULTS.termYears));
 
@@ -27,74 +26,80 @@ export function AffordabilityCalculator() {
       calculateAffordability({
         grossIncome: parseAmount(grossIncome),
         existingDebt: parseAmount(existingDebt),
-        deposit: parseAmount(deposit),
         annualRate: parseAmount(annualRate),
         termYears: parseAmount(termYears),
       }),
-    [grossIncome, existingDebt, deposit, annualRate, termYears],
+    [grossIncome, existingDebt, annualRate, termYears],
   );
 
   const incomeRatioPercent = Math.round(BOND_DEFAULTS.incomeRatio * 100);
+  const blockedByExpenses =
+    result.incomeAllowance > 0 && result.maxInstalment === 0;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-      <h2 className="font-heading text-2xl text-primary">Affordability</h2>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Estimate what you may afford using a {incomeRatioPercent}% rule of thumb
-        on gross monthly income, minus existing debt repayments.
+    <div
+      id="affordability"
+      className="scroll-mt-28 rounded-xl border border-border bg-card p-6 shadow-sm"
+    >
+      <h2 className="font-heading text-2xl text-primary">Bond affordability</h2>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        A rough figure using the {incomeRatioPercent}% of gross income rule.
+        Enter one income, or add both together if you are applying jointly.
+        The interest rate starts at the current prime rate (
+        {BOND_DEFAULTS.annualRate}%).
       </p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="afford-income">Gross monthly income (R)</Label>
+          <Label htmlFor="afford-income">
+            Gross monthly income, single or joint (R)
+          </Label>
           <Input
             id="afford-income"
             type="number"
             min={0}
             step={1000}
+            inputMode="decimal"
             value={grossIncome}
             onChange={(e) => setGrossIncome(e.target.value)}
             className="h-10"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="afford-debt">Existing monthly debt (R)</Label>
+          <Label htmlFor="afford-debt">Monthly expenses and debts (R)</Label>
           <Input
             id="afford-debt"
             type="number"
             min={0}
             step={100}
+            inputMode="decimal"
             value={existingDebt}
             onChange={(e) => setExistingDebt(e.target.value)}
             className="h-10"
           />
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Car payments, loans, store accounts and other amounts you already
+            pay. Leave out the new bond.
+          </p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="afford-deposit">Deposit saved (R)</Label>
-          <Input
-            id="afford-deposit"
-            type="number"
-            min={0}
-            step={10000}
-            value={deposit}
-            onChange={(e) => setDeposit(e.target.value)}
-            className="h-10"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="afford-rate">Interest rate (% p.a.)</Label>
+          <Label htmlFor="afford-rate">Interest rate (% a year)</Label>
           <Input
             id="afford-rate"
             type="number"
             min={0}
             max={30}
             step={0.01}
+            inputMode="decimal"
             value={annualRate}
             onChange={(e) => setAnnualRate(e.target.value)}
             className="h-10"
           />
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Prefilled with prime. Change it if the bank quoted another rate.
+          </p>
         </div>
-        <div className="space-y-2 sm:col-span-2 sm:max-w-[calc(50%-0.5rem)]">
+        <div className="space-y-2">
           <Label htmlFor="afford-term">Term (years)</Label>
           <Input
             id="afford-term"
@@ -102,6 +107,7 @@ export function AffordabilityCalculator() {
             min={1}
             max={30}
             step={1}
+            inputMode="numeric"
             value={termYears}
             onChange={(e) => setTermYears(e.target.value)}
             className="h-10"
@@ -111,19 +117,34 @@ export function AffordabilityCalculator() {
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         <CalculatorResult
-          label="Estimated max purchase price"
-          value={formatZar(result.maxPurchasePrice)}
+          label="Maximum monthly repayment"
+          value={formatZar(result.maxInstalment)}
           highlight
         />
         <CalculatorResult
-          label="Estimated max bond amount"
+          label="Maximum bond amount"
           value={formatZar(result.maxLoanAmount)}
         />
         <CalculatorResult
-          label="Affordable monthly instalment"
-          value={formatZar(result.maxInstalment)}
+          label={`${incomeRatioPercent}% of gross income`}
+          value={formatZar(result.incomeAllowance)}
         />
       </div>
+
+      {blockedByExpenses ? (
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          On these figures, the expenses and debts you entered already use up
+          the {incomeRatioPercent}% guideline, so there is nothing left for a
+          bond repayment.
+        </p>
+      ) : null}
+
+      <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+        This is a guide only, not a bond quotation and not financial advice.
+        Banks look at your credit record, the property and their own rules.
+        Prime and the rate you are offered can change. Phone Wendy if you want
+        to talk the numbers through.
+      </p>
     </div>
   );
 }
