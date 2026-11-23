@@ -1,6 +1,10 @@
-/** South African bond calculator defaults (update when prime moves). */
+/**
+ * South African bond calculator defaults.
+ * Prime lending rate is 10.75% after the 19 November 2026 MPC decision
+ * (repo rate held at 7.25%). Update annualRate when prime moves.
+ */
 export const BOND_DEFAULTS = {
-  annualRate: 11.75,
+  annualRate: 10.75,
   termYears: 20,
   depositPercent: 10,
   incomeRatio: 0.3,
@@ -21,18 +25,21 @@ export type BondRepaymentResult = {
 };
 
 export type AffordabilityInput = {
+  /** Gross monthly income for one person, or both incomes added together. */
   grossIncome: number;
+  /** Monthly expenses and debt repayments already going out. */
   existingDebt: number;
-  deposit: number;
   annualRate: number;
   termYears: number;
   incomeRatio?: number;
 };
 
 export type AffordabilityResult = {
+  /** 30% of gross income, before expenses and debts are taken off. */
+  incomeAllowance: number;
+  /** What is left for a bond repayment after expenses and debts. */
   maxInstalment: number;
   maxLoanAmount: number;
-  maxPurchasePrice: number;
 };
 
 export function formatZar(amount: number): string {
@@ -103,21 +110,18 @@ export function calculateAffordability(
   input: AffordabilityInput,
 ): AffordabilityResult {
   const ratio = input.incomeRatio ?? BOND_DEFAULTS.incomeRatio;
-  const maxInstalment = Math.max(
-    0,
-    input.grossIncome * ratio - input.existingDebt,
-  );
+  const incomeAllowance = Math.max(0, input.grossIncome * ratio);
+  const maxInstalment = Math.max(0, incomeAllowance - input.existingDebt);
   const maxLoanAmount = maxLoanFromPayment(
     maxInstalment,
     input.annualRate,
     input.termYears,
   );
-  const maxPurchasePrice = maxLoanAmount + input.deposit;
 
   return {
+    incomeAllowance,
     maxInstalment,
     maxLoanAmount,
-    maxPurchasePrice,
   };
 }
 

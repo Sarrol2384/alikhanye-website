@@ -68,6 +68,24 @@ export function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/guides" className="hover:text-primary-foreground">
+                Buying and selling
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/list-your-property"
+                className="hover:text-primary-foreground"
+              >
+                List your property
+              </Link>
+            </li>
+            <li>
+              <Link href="/tools" className="hover:text-primary-foreground">
+                Tools
+              </Link>
+            </li>
+            <li>
               <Link href="/contact" className="hover:text-primary-foreground">
                 Contact
               </Link>

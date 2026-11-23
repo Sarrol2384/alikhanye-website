@@ -21,6 +21,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/properties", label: "Properties" },
+  { href: "/guides", label: "Guides" },
   { href: "/tools", label: "Tools" },
   { href: "/contact", label: "Contact" },
 ];
@@ -56,7 +57,7 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => {
             const active = isActivePath(pathname, link.href);
             return (
@@ -95,7 +96,7 @@ export function Header() {
           <SheetTrigger
             className={cn(
               buttonVariants({ variant: "ghost", size: "icon" }),
-              "size-11 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground md:hidden",
+              "size-11 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground lg:hidden",
             )}
             aria-label="Open menu"
           >

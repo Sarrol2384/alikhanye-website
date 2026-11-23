@@ -1,9 +1,26 @@
 import { complianceLines, site } from "@/lib/site";
 import { absoluteUrl, getSiteUrl } from "@/lib/site-url";
+import { readCachedPublishedReviews } from "@/lib/reviews-store";
 
-export function OrganizationJsonLd() {
+export async function OrganizationJsonLd() {
   const siteUrl = getSiteUrl();
   const ffc = complianceLines().find((line) => line.label === "FFC");
+  const reviews = await readCachedPublishedReviews();
+  const aggregateRating =
+    reviews.length > 0
+      ? {
+          "@type": "AggregateRating",
+          ratingValue:
+            Math.round(
+              (reviews.reduce((sum, review) => sum + review.rating, 0) /
+                reviews.length) *
+                10,
+            ) / 10,
+          reviewCount: reviews.length,
+          bestRating: 5,
+          worstRating: 1,
+        }
+      : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -17,10 +34,10 @@ export function OrganizationJsonLd() {
     image: absoluteUrl("/brand/logo.jpg"),
     address: {
       "@type": "PostalAddress",
-      streetAddress: "16 Lilly Kate Crescent",
-      addressLocality: "Blue Downs",
-      postalCode: "7100",
-      addressRegion: "Western Cape",
+      streetAddress: site.streetAddress,
+      addressLocality: site.addressLocality,
+      postalCode: site.postalCode,
+      addressRegion: site.addressRegion,
       addressCountry: "ZA",
     },
     areaServed: site.areaServed.map((name) => ({
@@ -47,6 +64,7 @@ export function OrganizationJsonLd() {
           ]
         : []),
     ],
+    ...(aggregateRating ? { aggregateRating } : {}),
   };
 
   return (

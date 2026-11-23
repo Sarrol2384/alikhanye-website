@@ -25,15 +25,18 @@ function loadEnvLocal() {
 }
 
 async function runSqlMigration(dbUrl) {
-  const sqlPath = join(process.cwd(), "supabase", "migrations", "001_listings.sql");
-  const sql = readFileSync(sqlPath, "utf8");
+  const files = ["001_listings.sql", "002_reviews.sql"];
   const { Client } = await import("pg");
   const client = new Client({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } });
 
   await client.connect();
   try {
-    await client.query(sql);
-    console.log("Applied SQL migration.");
+    for (const file of files) {
+      const sqlPath = join(process.cwd(), "supabase", "migrations", file);
+      const sql = readFileSync(sqlPath, "utf8");
+      await client.query(sql);
+      console.log(`Applied ${file}.`);
+    }
   } finally {
     await client.end();
   }
@@ -155,8 +158,8 @@ async function main() {
     await runSqlMigration(dbUrl);
   } else {
     console.log(
-      "SUPABASE_DB_URL not set — skipping SQL migration.\n" +
-        "Run supabase/migrations/001_listings.sql in Supabase → SQL Editor if the listings table does not exist yet.",
+      "SUPABASE_DB_URL not set — skipping SQL migrations.\n" +
+        "Run supabase/migrations/001_listings.sql and supabase/migrations/002_reviews.sql in Supabase → SQL Editor if those tables do not exist yet.",
     );
   }
 

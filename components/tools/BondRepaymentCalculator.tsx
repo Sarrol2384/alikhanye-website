@@ -38,11 +38,15 @@ export function BondRepaymentCalculator() {
   );
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+    <div
+      id="repayment"
+      className="scroll-mt-28 rounded-xl border border-border bg-card p-6 shadow-sm"
+    >
       <h2 className="font-heading text-2xl text-primary">Bond repayment</h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Estimate your monthly home loan repayment based on purchase price,
-        deposit, interest rate, and term.
+        Estimate your monthly home loan repayment from the purchase price,
+        deposit, interest rate and term. The rate starts at the current prime
+        rate ({BOND_DEFAULTS.annualRate}%).
       </p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">

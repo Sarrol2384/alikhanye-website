@@ -6,8 +6,13 @@ export const site = {
   phoneDisplay: "073 752 9766",
   phoneTel: "+27737529766",
   whatsapp: "27737529766",
-  email: "admin@alikhanye.com",
-  address: "16 Lilly Kate Crescent, Blue Downs, 7100",
+  email: "admin@alikhanyeproperties.com",
+  /** Street line only. The house number is not published. */
+  streetAddress: "Lilly Kate Crescent",
+  addressLocality: "Blue Downs",
+  postalCode: "7100",
+  addressRegion: "Western Cape",
+  address: "Lilly Kate Crescent, Blue Downs, 7100",
   registration: "2026/253356/07",
   principal: "Wendy Landiswa Madikazi",
   ffc: "1233579",
@@ -17,7 +22,7 @@ export const site = {
    */
   ffcExpiry: "" as string,
   /** Stable sitemap date for pages that are not listings. Update when the copy changes. */
-  staticContentUpdated: "2026-10-29",
+  staticContentUpdated: "2026-11-23",
   locale: "en_ZA",
   areaServed: [
     "Blue Downs",

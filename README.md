@@ -15,12 +15,16 @@ R1999 Starter marketing website for **Alikhanye Properties** — a real estate s
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Hero, services, featured properties, service areas, CTA |
-| `/about` | Company story, vision/mission, principal |
+| `/` | Hero, services, featured properties, service areas, client reviews, CTA |
+| `/about` | Company story, principal, services and vision |
+| `/guides` | Buyer and seller checklists |
+| `/list-your-property` | Listing and free valuation enquiry |
 | `/properties` | All property listings |
 | `/properties/[id]` | Listing detail with enquire / WhatsApp |
+| `/tools` | Bond repayment and affordability calculators |
 | `/contact` | Contact details, enquiry form, Google Maps |
 | `/admin` | Agency-only listings admin (password protected) |
+| `/admin/reviews` | Client reviews (hidden until published) |
 
 ## Getting started
 
@@ -40,8 +44,8 @@ Open [http://localhost:3000](http://localhost:3000).
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
-2. Run the SQL in `supabase/migrations/001_listings.sql` in **Supabase → SQL Editor**  
-   *(or set `SUPABASE_DB_URL` from **Settings → Database → Connection string** and run `npm run db:setup` to apply it automatically)*.
+2. Run the SQL in `supabase/migrations/001_listings.sql` and `supabase/migrations/002_reviews.sql` in **Supabase → SQL Editor**  
+   *(or set `SUPABASE_DB_URL` from **Settings → Database → Connection string** and run `npm run db:setup` to apply them automatically)*. Migrations are not applied on deploy.
 3. Run `npm run db:setup` to create the `property-images` bucket and import `data/listings.json` if the table is empty.
 
 Without Supabase env vars, listings fall back to `data/listings.json` and `public/properties/` (local dev only).
@@ -50,7 +54,7 @@ Without Supabase env vars, listings fall back to `data/listings.json` and `publi
 
 1. Open [http://localhost:3000/admin](http://localhost:3000/admin) (or `/admin/login`).
 2. Sign in with `ADMIN_PASSWORD` from `.env.local`. `ADMIN_SECRET` must be set as well. If either is missing, login is refused — there is no built-in password.
-3. Click **Add listing**, upload photos, fill details, publish.
+3. Click **Add listing**, upload photos, fill details, publish. Use **Reviews** to add client comments. A review stays off the public site until it is published.
 
 The old admin password was committed in this repository. Set a new password on Vercel and do not reuse the published one.
 
@@ -64,7 +68,7 @@ Client self-serve upload is intentionally not included — sell that as a paid C
 | --- | --- | --- |
 | `BREVO_API_KEY` | For live email | Brevo API key |
 | `BREVO_SENDER_EMAIL` | For live email | Verified Brevo sender |
-| `CONTACT_TO_EMAIL` | Recommended | Enquiry inbox (default: `admin@alikhanye.com`) |
+| `CONTACT_TO_EMAIL` | Recommended | Enquiry inbox (default: `admin@alikhanyeproperties.com`) |
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Public site URL for canonical links, sitemap and sharing. If unset, production uses `VERCEL_PROJECT_PRODUCTION_URL`, then `VERCEL_URL`, then `https://alikhanye-website.vercel.app`. Local dev still uses localhost. |
 | `ADMIN_PASSWORD` | Required for admin | Password for `/admin`. Do not reuse a password that was ever committed to the repo. |
 | `ADMIN_SECRET` | Required for admin | Cookie signing secret. Login is refused when this is missing. |
